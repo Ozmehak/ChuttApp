@@ -3,7 +3,7 @@ export const Chatwindow = () => {
         <div className="text-3xl w-2/5 border-4 border-indigo-600 flex flex-col">
             <h2 className="border-b-4 border-b-blue-900">ChatWindow</h2>
             <div className="grow h-48 flex">
-                <p className="self-end">här kommer texten vara</p>
+                <p className="self-end">här kommer texten vara test om blocked</p>
 
             </div>
             <div className="flex">
