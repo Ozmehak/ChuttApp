@@ -1,10 +1,13 @@
-import {Chatwindow} from "./Chatwindow";
+import {ChatWindow} from "./ChatWindow";
+import {Rooms} from "./Rooms";
+import {Users} from "./Users";
 
 export const Landingpage = () => {
     return (
-        <div className="grid grid-rows-2 justify-items-center">
-            <h2 className="text-7xl">LändingPäge</h2>
-            <Chatwindow />
+        <div className="grid grid-cols-3">
+            <Rooms />
+            <ChatWindow />
+            <Users />
         </div>
     )
 }
