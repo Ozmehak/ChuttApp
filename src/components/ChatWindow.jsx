@@ -1,16 +1,18 @@
 import {useState} from "react";
 
 export const ChatWindow = () => {
-    const chatMessages = ["1", "3", "4", "5"]
-    // const chatMessage =
     const [message, setMessage] = useState('')
+    const [chatMessages, setChatMessages] = useState(["1", "3", "4", "5"])
 
+
+    const handleChange = event => {
+        setMessage(event.target.value)
+    }
 
     const handleSubmit = event => {
-        chatMessages.push(event.target.value)
-        setMessage(event.target.value)
-        console.log(chatMessages)
-
+        event.preventDefault()
+        setChatMessages([...chatMessages, message])
+        setMessage('')
     }
 
     return (
@@ -19,22 +21,24 @@ export const ChatWindow = () => {
 
             <div className="grow h-96 flex">
                 <ul className="self-end">
-                    {chatMessages.map((number) => <li key={number.toString()} value={number}></li>)}
+                    {chatMessages.map((number) => <li key={number.toString()}>{number.toString()}</li>)}
                 </ul>
             </div>
 
             <div className="flex">
-                <input
-                    className="border-t-4 border-r-4 border-blue-900"
-                    onChange={handleSubmit}
-                    value={message}
-                />
-                <button
-                    className="border-t-4 hover:bg-gray-800 grow border-blue-900"
-
-                >
-                    Send
-                </button>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        className="border-t-4 border-r-4 border-blue-900"
+                        onChange={handleChange}
+                        value={message}
+                    />
+                    <button
+                        type="submit"
+                        className="border-t-4 hover:bg-gray-800 grow border-blue-900"
+                    >
+                        Send
+                    </button>
+                </form>
             </div>
         </div>
     )
