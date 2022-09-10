@@ -1,9 +1,28 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
+
 
 export const ChatWindow = () => {
     const [message, setMessage] = useState('')
-    const [chatMessages, setChatMessages] = useState(["1", "3", "4", "5"])
+    const [chatMessages, setChatMessages] = useState([])
 
+    useEffect(() => {
+        setInterval(checkMessages, 1000)
+        checkMessages()
+    }, [])
+
+    function checkMessages() {
+        return fetch('http://127.0.0.1:5000/')
+            .then(async (res) => {
+                if (res.status >= 400) {
+                    throw new Error(await res.text())
+                }
+
+                return res.json()
+            })
+            .then((data) => {
+                setChatMessages(data)
+            })
+    }
 
     const handleChange = event => {
         setMessage(event.target.value)
@@ -11,8 +30,30 @@ export const ChatWindow = () => {
 
     const handleSubmit = event => {
         event.preventDefault()
-        setChatMessages([...chatMessages, message])
+        //setChatMessages([...chatMessages, message])
+        if(!message?.trim().length) {
+            return
+        }
         setMessage('')
+        fetch('http://127.0.0.1:5000/', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: 'lskdjghljkgd',
+                text: message,
+            })
+        })
+    }
+
+    function createMessageTemplate(message) {
+        const timestamp = new Date(message.timestamp)
+        return (<li className="message" key={message.id}>
+            <span className="timestamp">[{timestamp.getHours().toString().padStart(2, '0')}:{timestamp.getMinutes().toString().padStart(2, '0')}:{timestamp.getSeconds().toString().padStart(2, '0')}] </span>
+            <span className="userName">{message.userId}: </span>
+            <span className="text">{message.text}</span>
+        </li>)
     }
 
     return (
@@ -20,9 +61,9 @@ export const ChatWindow = () => {
             <h2 className="border-b-4 border-b-blue-900">ChatWindow</h2>
 
             <div className="grow h-96 flex">
-                <ul className="self-end">
-                    {chatMessages.map((number) => <li key={number.toString()}>{number.toString()}</li>)}
-                </ul>
+                <ul className="self-end">{
+                    chatMessages.map(createMessageTemplate)
+                }</ul>
             </div>
 
             <div className="flex">
