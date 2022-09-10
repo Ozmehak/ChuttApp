@@ -1,30 +1,21 @@
 import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../UserContext";
+import {useMessaging} from "../store/messagingStore";
 
 
 export const ChatWindow = () => {
+    const {messages: chatMessages, sendMessage, getMessages, subscribe, unsubscribe} = useMessaging()
     const [message, setMessage] = useState('')
-    const [chatMessages, setChatMessages] = useState([])
     const [user] = useContext(UserContext)
 
     useEffect(() => {
-        setInterval(checkMessages, 1000)
-        checkMessages()
+        subscribe()
+        getMessages()
+
+        return () => {
+            unsubscribe()
+        }
     }, [])
-
-    function checkMessages() {
-        return fetch('http://127.0.0.1:5000/')
-            .then(async (res) => {
-                if (res.status >= 400) {
-                    throw new Error(await res.text())
-                }
-
-                return res.json()
-            })
-            .then((data) => {
-                setChatMessages(data)
-            })
-    }
 
     const handleChange = event => {
         setMessage(event.target.value)
@@ -33,26 +24,16 @@ export const ChatWindow = () => {
     const handleSubmit = event => {
         event.preventDefault()
         //setChatMessages([...chatMessages, message])
-        if(!message?.trim().length) {
-            return
-        }
-        setMessage('')
-        fetch('http://127.0.0.1:5000/', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-            },
-            body: JSON.stringify({
-                userId: user,
-                text: message,
-            })
-        })
+        sendMessage(user, message)
+            .then(() => setMessage(''))
+            .then(getMessages)
     }
 
     function createMessageTemplate(message) {
         const timestamp = new Date(message.timestamp)
         return (<li className="message" key={message.id}>
-            <span className="timestamp">[{timestamp.getHours().toString().padStart(2, '0')}:{timestamp.getMinutes().toString().padStart(2, '0')}:{timestamp.getSeconds().toString().padStart(2, '0')}] </span>
+            <span
+                className="timestamp">[{timestamp.getHours().toString().padStart(2, '0')}:{timestamp.getMinutes().toString().padStart(2, '0')}:{timestamp.getSeconds().toString().padStart(2, '0')}] </span>
             <span className="userName">{message.userId}: </span>
             <span className="text">{message.text}</span>
         </li>)

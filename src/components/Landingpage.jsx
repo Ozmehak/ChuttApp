@@ -12,11 +12,11 @@ export const Landingpage = () => {
         <div className="grid grid-cols-3">
             {!userName ?
                 <LoginForm/> :
-                [
-                    <Rooms/>,
-                    <ChatWindow/>,
+                <>
+                    <Rooms/>
+                    <ChatWindow/>
                     <Users/>
-                ]}
+                </>}
         </div>
     )
 }
