@@ -1,9 +1,11 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
+import {UserContext} from "../UserContext";
 
 
 export const ChatWindow = () => {
     const [message, setMessage] = useState('')
     const [chatMessages, setChatMessages] = useState([])
+    const [user] = useContext(UserContext)
 
     useEffect(() => {
         setInterval(checkMessages, 1000)
@@ -41,7 +43,7 @@ export const ChatWindow = () => {
                 'content-type': 'application/json',
             },
             body: JSON.stringify({
-                userId: 'lskdjghljkgd',
+                userId: user,
                 text: message,
             })
         })
